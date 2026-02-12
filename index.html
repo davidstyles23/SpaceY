@@ -1,1 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orbital Dynamics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
+
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            padding: 20px 40px;
+            background: rgba(0,0,0,0.6);
+            font-weight: 800;
+            letter-spacing: 2px;
+            z-index: 100;
+        }
+
+        .hero {
+            height: 100vh;
+            background: url("https://images.unsplash.com/photo-1446776811953-b23d57bd21aa") center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 60px;
+        }
+
+        .hero h1 {
+            font-size: 60px;
+            margin: 0;
+        }
+
+        .hero h2 {
+            font-weight: 300;
+            margin-top: 10px;
+        }
+
+        section {
+            padding: 80px 60px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #111;
+            padding: 30px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        #map {
+            height: 400px;
+            border-radius: 5px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        #adminPanel {
+            display: none;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111;
+            padding: 30px;
+            width: 300px;
+            z-index: 200;
+        }
+
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            background: #000;
+            color: white;
+            border: 1px solid #333;
+            padding: 8px;
+        }
+
+        button {
+            background: white;
+            color: black;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .countdown {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>ORBITAL DYNAMICS</header>
+
+<div class="hero">
+    <h1 id="launchName">STARLIFT-1</h1>
+    <h2 id="launchDate">March 1, 2026</h2>
+    <div class="countdown" id="countdown"></div>
+</div>
+
+<section>
+    <div class="section-title">LIVE MISSION</div>
+    <div class="card">
+        <p>Status: <span id="status">PREPARING</span></p>
+        <p>Altitude: <span id="altitude">0</span> m</p>
+        <p>Speed: <span id="speed">0</span> km/h</p>
+    </div>
+</section>
+
+<section>
+    <div class="section-title">FLIGHT PATH</div>
+    <div id="map"></div>
+</section>
+
+<section>
+    <div class="section-title">MISSION UPDATES</div>
+    <div class="card">
+        <ul id="newsList">
+            <li>Vehicle rollout complete.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Admin Panel -->
+<div id="adminPanel">
+    <h3>ADMIN PANEL</h3>
+
+    <input id="adminLaunchName" placeholder="Launch Name">
+    <input id="adminLaunchDate" placeholder="Launch Date (YYYY-MM-DD)">
+    <input id="adminStatus" placeholder="Status">
+    <input id="adminAltitude" placeholder="Altitude">
+    <input id="adminSpeed" placeholder="Speed">
+    <textarea id="adminNews" placeholder="Add News"></textarea>
+
+    <button onclick="updateData()">Update</button>
+    <button onclick="closeAdmin()">Close</button>
+</div>
+
+<script>
+    // Countdown
+    function updateCountdown() {
+        let launchDate = new Date(document.getElementById("launchDate").innerText).getTime();
+        let now = new Date().getTime();
+        let distance = launchDate - now;
+
+        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        document.getElementById("countdown").innerText =
+            "T-" + days + " DAYS";
+    }
+    setInterval(updateCountdown, 1000);
+
+    // Map
+    var map = L.map('map').setView([28.5, -80.6], 4);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    var marker = L.marker([28.5, -80.6]).addTo(map);
+
+    // Admin Access
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Insert") {
+            let code = prompt("Enter Admin Code:");
+            if (code === "Goforlaunchandready") {
+                document.getElementById("adminPanel").style.display = "block";
+            } else {
+                alert("Access Denied");
+            }
+        }
+    });
+
+    function updateData() {
+        let launchName = document.getElementById("adminLaunchName").value;
+        let launchDate = document.getElementById("adminLaunchDate").value;
+        let status = document.getElementById("adminStatus").value;
+        let altitude = document.getElementById("adminAltitude").value;
+        let speed = document.getElementById("adminSpeed").value;
+        let news = document.getElementById("adminNews").value;
+
+        if(launchName) document.getElementById("launchName").innerText = launchName;
+        if(launchDate) document.getElementById("launchDate").innerText = launchDate;
+        if(status) document.getElementById("status").innerText = status;
+        if(altitude) document.getElementById("altitude").innerText = altitude;
+        if(speed) document.getElementById("speed").innerText = speed;
+
+        if(news){
+            let li = document.createElement("li");
+            li.innerText = news;
+            document.getElementById("newsList").appendChild(li);
+        }
+
+        closeAdmin();
+    }
+
+    function closeAdmin(){
+        document.getElementById("adminPanel").style.display = "none";
+    }
+</script>
+
+</body>
+</html>
 
