@@ -3,31 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Space Y</title>
+<title>SpaceY</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter', sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:black;color:white;overflow-x:hidden;}
 
-body{
-background:black;
-color:white;
-overflow:hidden;
-}
-
-/* VIDEO */
 video{
 position:fixed;
-right:0;
-bottom:0;
-min-width:100%;
-min-height:100%;
+right:0;bottom:0;
+min-width:100%;min-height:100%;
 object-fit:cover;
 z-index:-2;
 filter:brightness(35%);
@@ -35,11 +22,8 @@ filter:brightness(35%);
 
 .overlay-dark{
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.95));
+top:0;left:0;width:100%;height:100%;
+background:linear-gradient(to bottom,rgba(0,0,0,0.7),rgba(0,0,0,0.95));
 z-index:-1;
 }
 
@@ -52,106 +36,55 @@ align-items:center;
 letter-spacing:2px;
 }
 
-.logo{
-font-weight:800;
-font-size:18px;
-}
-
-.status-badge{
-padding:8px 14px;
-border:1px solid rgba(255,255,255,0.2);
+.logo{font-weight:800;font-size:18px;}
+.live-badge{
+color:#ff3b3b;
+font-weight:600;
 font-size:12px;
-letter-spacing:1px;
-text-transform:uppercase;
+letter-spacing:2px;
 }
 
-/* MAIN */
+/* MAIN GRID */
 .container{
 width:80%;
 margin:auto;
-margin-top:100px;
+margin-top:80px;
 display:grid;
 grid-template-columns:2fr 1fr;
 gap:40px;
 }
 
-.main-panel{
-backdrop-filter:blur(12px);
+.panel{
+backdrop-filter:blur(14px);
 background:rgba(255,255,255,0.05);
-padding:60px;
 border:1px solid rgba(255,255,255,0.08);
+padding:50px;
 }
 
-.mission-title{
-font-size:36px;
-font-weight:600;
-margin-bottom:10px;
-}
+.mission-title{font-size:36px;font-weight:600;margin-bottom:10px;}
+.rocket-name{font-size:13px;letter-spacing:2px;opacity:0.6;margin-bottom:40px;}
+.countdown{font-size:52px;font-weight:800;letter-spacing:4px;margin-bottom:20px;}
+.phase{font-size:18px;letter-spacing:2px;opacity:0.8;}
 
-.rocket-name{
-font-size:13px;
-letter-spacing:2px;
-opacity:0.6;
-margin-bottom:40px;
-}
-
-.countdown{
-font-size:52px;
-font-weight:800;
-letter-spacing:4px;
-margin-bottom:20px;
-}
-
-.phase{
-font-size:18px;
-letter-spacing:2px;
-opacity:0.8;
-}
-
-/* SIDE PANEL */
-.side-panel{
-backdrop-filter:blur(12px);
+input,button{
+width:100%;padding:10px;margin-bottom:12px;
 background:rgba(255,255,255,0.05);
-padding:40px;
-border:1px solid rgba(255,255,255,0.08);
-}
-
-input{
-width:100%;
-padding:10px;
-margin-bottom:15px;
-background:rgba(255,255,255,0.05);
-border:1px solid rgba(255,255,255,0.1);
+border:1px solid rgba(255,255,255,0.15);
 color:white;
 }
 
-button{
-width:100%;
-padding:10px;
-background:transparent;
-border:1px solid rgba(255,255,255,0.2);
-color:white;
-cursor:pointer;
-transition:0.3s;
-margin-bottom:10px;
-}
-
-button:hover{
-background:white;
-color:black;
-}
+button{cursor:pointer;transition:0.3s;}
+button:hover{background:white;color:black;}
 
 #adminPanel{display:none;}
 
-/* 🚀 LAUNCH OVERLAY */
+/* 🚀 BROADCAST OVERLAY */
 #launchOverlay{
 position:fixed;
-top:0;
-left:0;
-width:100%;
+top:0;left:0;width:100%;
 padding:40px 0;
 text-align:center;
-background:linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
+background:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0));
 display:none;
 z-index:10;
 animation:fadeIn 1s ease forwards;
@@ -164,41 +97,56 @@ gap:60px;
 font-size:12px;
 letter-spacing:2px;
 opacity:0.7;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
 .timeline div{
 position:relative;
 }
 
+.timeline div.active{
+opacity:1;
+font-weight:600;
+}
+
 .timeline div::after{
 content:"";
 position:absolute;
-top:-10px;
-left:50%;
-width:6px;
-height:6px;
+top:-10px;left:50%;
+width:8px;height:8px;
 background:white;
 border-radius:50%;
 transform:translateX(-50%);
+opacity:0.3;
+transition:0.4s;
 }
 
-.tplus{
-font-size:42px;
-font-weight:600;
-letter-spacing:3px;
-margin-bottom:5px;
+.timeline div.active::after{
+opacity:1;
+box-shadow:0 0 12px white;
 }
 
-.mission-label{
-font-size:13px;
+.tplus{font-size:42px;font-weight:600;letter-spacing:3px;}
+.mission-label{font-size:13px;letter-spacing:2px;opacity:0.6;}
+
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* 🎥 LIVESTREAM SECTION */
+.stream-section{
+width:80%;
+margin:80px auto;
+}
+
+.stream-section h2{
+font-weight:400;
 letter-spacing:2px;
-opacity:0.6;
+margin-bottom:20px;
 }
 
-@keyframes fadeIn{
-from{opacity:0;}
-to{opacity:1;}
+iframe{
+width:100%;
+height:500px;
+border:none;
 }
 </style>
 </head>
@@ -213,20 +161,19 @@ to{opacity:1;}
 
 <header>
 <div class="logo">SpaceY</div>
-<div class="status-badge" id="statusBadge">AWAITING DATA</div>
+<div class="live-badge">● LIVE</div>
 </header>
 
 <div class="container">
 
-<div class="main-panel">
-<div class="mission-title" id="missionName">Loading Mission...</div>
-<div class="rocket-name" id="rocketName">Loading Vehicle...</div>
+<div class="panel">
+<div class="mission-title" id="missionName">Loading...</div>
+<div class="rocket-name" id="rocketName">Vehicle</div>
 <div class="countdown" id="countdownDisplay">T-00:00:00:00</div>
 <div class="phase" id="missionPhase">STANDBY</div>
 </div>
 
-<div class="side-panel">
-
+<div class="panel">
 <div id="loginPanel">
 <input type="email" id="email" placeholder="Email">
 <input type="password" id="password" placeholder="Password">
@@ -242,13 +189,13 @@ to{opacity:1;}
 <button onclick="resetMission()">RESET</button>
 <button onclick="logout()">LOGOUT</button>
 </div>
-
 </div>
+
 </div>
 
 <!-- 🚀 LAUNCH OVERLAY -->
 <div id="launchOverlay">
-<div class="timeline">
+<div class="timeline" id="timeline">
 <div>STARTUP</div>
 <div>LIFTOFF</div>
 <div>MAX-Q</div>
@@ -258,149 +205,85 @@ to{opacity:1;}
 <div class="mission-label" id="overlayMission">MISSION</div>
 </div>
 
+<!-- 🎥 LIVE STREAM -->
+<div class="stream-section">
+<h2>LIVE STREAM</h2>
+<iframe src="https://www.youtube.com/embed/anOzeeUy3bA?autoplay=1"
+allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyB_Jk7tFViWoa-Sh0WT5NCHNt3KKlomeTI",
-authDomain: "spacey-1b9d2.firebaseapp.com",
-databaseURL: "https://spacey-1b9d2-default-rtdb.europe-west1.firebasedatabase.app",
-projectId: "spacey-1b9d2",
-storageBucket: "spacey-1b9d2.firebasestorage.app",
-messagingSenderId: "116458770590",
-appId: "1:116458770590:web:ef38bfbe02fead0c916b8f"
-};
+const firebaseConfig={apiKey:"AIzaSyB_Jk7tFViWoa-Sh0WT5NCHNt3KKlomeTI",authDomain:"spacey-1b9d2.firebaseapp.com",databaseURL:"https://spacey-1b9d2-default-rtdb.europe-west1.firebasedatabase.app",projectId:"spacey-1b9d2",storageBucket:"spacey-1b9d2.firebasestorage.app",messagingSenderId:"116458770590",appId:"1:116458770590:web:ef38bfbe02fead0c916b8f"};
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
-const missionRef = ref(db,"mission");
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const auth=getAuth(app);
+const missionRef=ref(db,"mission");
 
 let countdownInterval=null;
 let tPlusInterval=null;
 let liftoffTime=null;
 let currentMission={};
 
+function activatePhase(index){
+const nodes=document.querySelectorAll("#timeline div");
+nodes.forEach(n=>n.classList.remove("active"));
+if(nodes[index]) nodes[index].classList.add("active");
+}
+
+function startMissionSequence(){
+liftoffTime=new Date().getTime();
+launchOverlay.style.display="block";
+overlayMission.innerText=currentMission.mission;
+
+activatePhase(1);
+
+tPlusInterval=setInterval(()=>{
+const diff=new Date().getTime()-liftoffTime;
+const m=Math.floor(diff/60000);
+const s=Math.floor((diff%60000)/1000);
+tPlusTimer.innerText=`T+ ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+},1000);
+
+setTimeout(()=>activatePhase(2),20000);
+setTimeout(()=>activatePhase(3),60000);
+}
+
 function startCountdown(dateString){
 if(countdownInterval) clearInterval(countdownInterval);
 const target=new Date(dateString).getTime();
 
 countdownInterval=setInterval(()=>{
-const now=new Date().getTime();
-const diff=target-now;
-
-if(diff<=0){
-clearInterval(countdownInterval);
-startMissionSequence();
-return;
-}
-
-const d=Math.floor(diff/(1000*60*60*24));
+const diff=target-new Date().getTime();
+if(diff<=0){clearInterval(countdownInterval);startMissionSequence();return;}
 const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
 const m=Math.floor((diff%(1000*60*60))/(1000*60));
 const s=Math.floor((diff%(1000*60))/1000);
-
-document.getElementById("countdownDisplay").innerText=
-`T-${d}:${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-
+countdownDisplay.innerText=`T-00:${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 },1000);
 }
 
-function startMissionSequence(){
-
-liftoffTime=new Date().getTime();
-document.getElementById("launchOverlay").style.display="block";
-document.getElementById("overlayMission").innerText=currentMission.mission;
-
-if(tPlusInterval) clearInterval(tPlusInterval);
-
-tPlusInterval=setInterval(()=>{
-const now=new Date().getTime();
-const diff=now-liftoffTime;
-
-const minutes=Math.floor(diff/60000);
-const seconds=Math.floor((diff%60000)/1000);
-
-document.getElementById("tPlusTimer").innerText=
-`T+ ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-
-},1000);
-
-const phases=[
-{status:"IGNITION",delay:0},
-{status:"LIFTOFF",delay:3000},
-{status:"MAX-Q",delay:20000},
-{status:"STAGE SEPARATION",delay:60000},
-{status:"ORBIT CONFIRMED",delay:120000}
-];
-
-phases.forEach(p=>{
-setTimeout(()=>{
-set(missionRef,{
-...currentMission,
-status:p.status
-});
-},p.delay);
-});
-}
-
-onValue(missionRef,(snapshot)=>{
-const data=snapshot.val();
-if(!data) return;
-
-currentMission=data;
-
-missionName.innerText=data.mission;
-rocketName.innerText=data.rocket;
-missionPhase.innerText=data.status;
-statusBadge.innerText=data.status;
-
-if(data.launchDate) startCountdown(data.launchDate);
+onValue(missionRef,(snap)=>{
+const d=snap.val();if(!d)return;
+currentMission=d;
+missionName.innerText=d.mission;
+rocketName.innerText=d.rocket;
+missionPhase.innerText=d.status;
+if(d.launchDate) startCountdown(d.launchDate);
 });
 
-window.login=function(){
-signInWithEmailAndPassword(auth,email.value,password.value)
-.then(()=>{
-adminPanel.style.display="block";
-loginPanel.style.display="none";
-});
-}
-
-window.logout=function(){
-signOut(auth);
-adminPanel.style.display="none";
-loginPanel.style.display="block";
-}
-
-window.updateMission=function(){
-set(missionRef,{
-mission:adminMission.value,
-rocket:adminRocket.value,
-launchDate:adminLaunch.value,
-status:"COUNTDOWN"
-});
-}
-
-window.abortMission=function(){
-set(missionRef,{
-...currentMission,
-status:"MISSION ABORTED"
-});
-}
-
-window.resetMission=function(){
-set(missionRef,{
-mission:"",
-rocket:"",
-launchDate:"",
-status:"AWAITING NEW MISSION"
-});
-}
+window.login=()=>signInWithEmailAndPassword(auth,email.value,password.value).then(()=>{adminPanel.style.display="block";loginPanel.style.display="none";});
+window.logout=()=>{signOut(auth);adminPanel.style.display="none";loginPanel.style.display="block";};
+window.updateMission=()=>set(missionRef,{mission:adminMission.value,rocket:adminRocket.value,launchDate:adminLaunch.value,status:"COUNTDOWN"});
+window.abortMission=()=>set(missionRef,{...currentMission,status:"MISSION ABORTED"});
+window.resetMission=()=>set(missionRef,{mission:"",rocket:"",launchDate:"",status:"AWAITING NEW MISSION"});
 
 </script>
-
 </body>
 </html>
+
