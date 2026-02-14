@@ -1,270 +1,261 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Orbital Dynamics</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Starship Factory | Mission Control</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
+<style>
+body {
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:black;
+color:white;
+overflow-x:hidden;
+}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Montserrat', sans-serif;
-            background: black;
-            color: white;
-        }
+video {
+position:fixed;
+right:0;
+bottom:0;
+min-width:100%;
+min-height:100%;
+z-index:-1;
+object-fit:cover;
+filter:brightness(40%);
+}
 
-        header {
-            position: fixed;
-            width: 100%;
-            padding: 20px 40px;
-            background: rgba(0,0,0,0.6);
-            font-weight: 800;
-            z-index: 10;
-        }
+header {
+text-align:center;
+padding:40px 20px;
+font-size:28px;
+letter-spacing:3px;
+}
 
-        .video-bg {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            opacity: 0.4;
-        }
+.panel {
+background:rgba(0,0,0,0.7);
+padding:30px;
+margin:20px auto;
+width:90%;
+max-width:900px;
+border:1px solid #222;
+}
 
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-left: 60px;
-        }
+.status {
+font-size:22px;
+margin:10px 0;
+}
 
-        section {
-            padding: 80px 60px;
-            background: black;
-        }
+.countdown {
+font-size:32px;
+font-weight:bold;
+}
 
-        .card {
-            background: #111;
-            padding: 30px;
-            margin-bottom: 20px;
-        }
+button {
+padding:10px 15px;
+background:#111;
+color:white;
+border:1px solid #444;
+cursor:pointer;
+margin:5px 0;
+}
 
-        .go { color: #00ff88; }
-        .nogo { color: red; }
+button:hover {
+background:#222;
+}
 
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: #111;
-            border: 1px solid #333;
-            color: white;
-        }
+input {
+padding:8px;
+margin:5px 0;
+width:100%;
+background:#111;
+border:1px solid #333;
+color:white;
+}
 
-        button {
-            background: white;
-            color: black;
-            cursor: pointer;
-        }
-
-        #adminPanel {
-            display: none;
-            position: fixed;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: black;
-            padding: 30px;
-            width: 350px;
-            z-index: 20;
-        }
-    </style>
+#adminPanel {
+display:none;
+}
+</style>
 </head>
 
 <body>
 
-<video autoplay muted loop playsinline class="video-bg">
-    <source src="assets/launch.mp4" type="video/mp4">
+<video autoplay muted loop>
+<source src="your-video.mp4" type="video/mp4">
 </video>
 
-<header>ORBITAL DYNAMICS</header>
+<header>
+STARSHIP FACTORY  
+<br>
+MISSION CONTROL
+</header>
 
-<div class="hero">
-    <h1 id="launchName">STARLIFT-1</h1>
-    <h2 id="launchDate">2026-03-01T18:00:00</h2>
-    <h2 id="countdownDisplay"></h2>
+<div class="panel">
+<div id="missionName">Mission: Loading...</div>
+<div id="rocketName">Vehicle: Loading...</div>
+<div class="status" id="missionStatus">Status: Awaiting Data</div>
+<div class="countdown" id="countdownDisplay">T-00:00:00:00</div>
 </div>
 
-<section>
-    <div class="card">
-        <h3>MISSION CONTROL</h3>
+<div class="panel" id="loginPanel">
+<h3>Admin Login</h3>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
 
-        <p>Mission Phase: <span id="phase">COUNTDOWN</span></p>
-        <p>Launch Director: <span id="director" class="go">GO</span></p>
+<div class="panel" id="adminPanel">
+<h3>Admin Control</h3>
 
-        <h4>SYSTEM STATUS</h4>
-        <p>Booster: <span id="booster" class="go">GO</span></p>
-        <p>Engines: <span id="engines" class="go">GO</span></p>
-        <p>Guidance: <span id="guidance" class="go">GO</span></p>
-        <p>Weather: <span id="weather" class="go">GO</span></p>
+<input type="text" id="adminMission" placeholder="Mission Name">
+<input type="text" id="adminRocket" placeholder="Rocket Name">
+<input type="datetime-local" id="adminLaunch">
 
-        <h2 id="goStatus" class="go">GO FOR LAUNCH</h2>
-    </div>
-</section>
-
-<section>
-    <div class="card">
-        <h3>MISSION NEWS</h3>
-        <ul id="newsList"></ul>
-    </div>
-</section>
-
-<section id="loginPanel">
-    <div class="card">
-        <h3>ADMIN LOGIN</h3>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-    </div>
-</section>
-
-<div id="adminPanel">
-    <h3>ADMIN CONTROL</h3>
-
-    <input id="adminLaunchName" placeholder="Launch Name">
-    <input id="adminLaunchDate" placeholder="Launch Date (YYYY-MM-DDTHH:MM:SS)">
-    <input id="adminPhase" placeholder="Mission Phase">
-    <input id="adminDirector" placeholder="Director (GO/NO GO)">
-    <input id="adminBooster" placeholder="Booster (GO/NO GO)">
-    <input id="adminEngines" placeholder="Engines (GO/NO GO)">
-    <input id="adminGuidance" placeholder="Guidance (GO/NO GO)">
-    <input id="adminWeather" placeholder="Weather (GO/NO GO)">
-    <input id="adminGoStatus" placeholder="GO Status Text">
-    <input id="adminNews" placeholder="News Update">
-
-    <button onclick="updateData()">Update</button>
-    <button onclick="logout()">Logout</button>
+<button onclick="updateMission()">Update Mission</button>
+<button onclick="abortMission()">Abort</button>
+<button onclick="resetMission()">Reset</button>
+<button onclick="logout()">Logout</button>
 </div>
 
 <script type="module">
 
+// 🔥 PASTE YOUR FIREBASE CONFIG HERE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "PASTE-YOURS",
-  authDomain: "PASTE-YOURS",
-  databaseURL: "PASTE-YOURS",
-  projectId: "PASTE-YOURS",
-  storageBucket: "PASTE-YOURS",
-  messagingSenderId: "PASTE-YOURS",
-  appId: "PASTE-YOURS"
+apiKey: "PASTE_HERE",
+authDomain: "PASTE_HERE",
+databaseURL: "PASTE_HERE",
+projectId: "PASTE_HERE",
+storageBucket: "PASTE_HERE",
+messagingSenderId: "PASTE_HERE",
+appId: "PASTE_HERE"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+
 const missionRef = ref(db, "mission");
 
 let countdownInterval = null;
+let phaseTimeout = null;
 
+// 🚀 Countdown Engine
 function startCountdown(dateString) {
 
-    if (countdownInterval) clearInterval(countdownInterval);
+if(countdownInterval) clearInterval(countdownInterval);
 
-    const target = new Date(dateString).getTime();
+const target = new Date(dateString).getTime();
 
-    if (isNaN(target)) {
-        document.getElementById("countdownDisplay").innerText = "Invalid Date";
-        return;
-    }
+countdownInterval = setInterval(()=>{
+const now = new Date().getTime();
+const distance = target - now;
 
-    countdownInterval = setInterval(() => {
-
-        const now = new Date().getTime();
-        const distance = target - now;
-
-        if (distance <= 0) {
-            clearInterval(countdownInterval);
-            document.getElementById("countdownDisplay").innerText = "🚀 LIFTOFF";
-            return;
-        }
-
-        const days = Math.floor(distance/(1000*60*60*24));
-        const hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-        const minutes = Math.floor((distance%(1000*60*60))/(1000*60));
-        const seconds = Math.floor((distance%(1000*60))/1000);
-
-        document.getElementById("countdownDisplay").innerText =
-        `T-${days}:${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-
-    },1000);
+if(distance <= 0){
+clearInterval(countdownInterval);
+startMissionSequence();
+return;
 }
 
-onValue(missionRef, (snapshot)=>{
-    const data = snapshot.val();
-    if(!data) return;
+const days = Math.floor(distance / (1000*60*60*24));
+const hours = Math.floor((distance % (1000*60*60*24))/(1000*60*60));
+const minutes = Math.floor((distance % (1000*60*60))/(1000*60));
+const seconds = Math.floor((distance % (1000*60))/1000);
 
-    document.getElementById("launchName").innerText = data.launchName;
-    document.getElementById("launchDate").innerText = data.launchDate;
-    document.getElementById("phase").innerText = data.phase;
+document.getElementById("countdownDisplay").innerText =
+`T-${days}:${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
 
-    function setStatus(id,value){
-        let el = document.getElementById(id);
-        el.innerText = value;
-        el.className = value==="GO"?"go":"nogo";
-    }
-
-    setStatus("director",data.director);
-    setStatus("booster",data.booster);
-    setStatus("engines",data.engines);
-    setStatus("guidance",data.guidance);
-    setStatus("weather",data.weather);
-
-    document.getElementById("goStatus").innerText = data.goStatus;
-
-    startCountdown(data.launchDate);
-
-    let newsList = document.getElementById("newsList");
-    newsList.innerHTML="";
-    data.news?.forEach(n=>{
-        let li=document.createElement("li");
-        li.innerText=n;
-        newsList.appendChild(li);
-    });
-});
-
-window.login=function(){
-    signInWithEmailAndPassword(auth,email.value,password.value)
-    .catch(e=>alert(e.message));
+},1000);
 }
 
-window.logout=function(){ signOut(auth); }
+// 🚀 Automatic Mission Phases
+function startMissionSequence(){
 
-onAuthStateChanged(auth,user=>{
-    adminPanel.style.display = user?"block":"none";
+const phases = [
+{status:"IGNITION SEQUENCE START", delay:0},
+{status:"LIFTOFF", delay:5000},
+{status:"MAX-Q", delay:20000},
+{status:"STAGE SEPARATION", delay:60000},
+{status:"ORBIT CONFIRMED", delay:120000}
+];
+
+phases.forEach(phase=>{
+setTimeout(()=>{
+set(missionRef,{
+...currentMission,
+status:phase.status
+});
+},phase.delay);
+});
+}
+
+let currentMission = {};
+
+onValue(missionRef,(snapshot)=>{
+const data = snapshot.val();
+if(!data) return;
+
+currentMission = data;
+
+document.getElementById("missionName").innerText = "Mission: " + data.mission;
+document.getElementById("rocketName").innerText = "Vehicle: " + data.rocket;
+document.getElementById("missionStatus").innerText = "Status: " + data.status;
+
+if(data.launchDate){
+startCountdown(data.launchDate);
+}
 });
 
-window.updateData=function(){
-    let newData={
-        launchName: adminLaunchName.value,
-        launchDate: adminLaunchDate.value,
-        phase: adminPhase.value,
-        director: adminDirector.value,
-        booster: adminBooster.value,
-        engines: adminEngines.value,
-        guidance: adminGuidance.value,
-        weather: adminWeather.value,
-        goStatus: adminGoStatus.value,
-        news: [adminNews.value]
-    };
-    set(missionRef,newData);
+// 🔐 Auth
+window.login = function(){
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+signInWithEmailAndPassword(auth,email,password)
+.then(()=>{
+document.getElementById("adminPanel").style.display="block";
+document.getElementById("loginPanel").style.display="none";
+});
+}
+
+window.logout = function(){
+signOut(auth);
+document.getElementById("adminPanel").style.display="none";
+document.getElementById("loginPanel").style.display="block";
+}
+
+// 🛰 Admin Controls
+window.updateMission = function(){
+const mission = document.getElementById("adminMission").value;
+const rocket = document.getElementById("adminRocket").value;
+const launchDate = document.getElementById("adminLaunch").value;
+
+set(missionRef,{
+mission,
+rocket,
+launchDate,
+status:"COUNTDOWN"
+});
+}
+
+window.abortMission = function(){
+set(missionRef,{
+...currentMission,
+status:"MISSION ABORTED"
+});
+}
+
+window.resetMission = function(){
+set(missionRef,{
+mission:"",
+rocket:"",
+launchDate:"",
+status:"AWAITING NEW MISSION"
+});
 }
 
 </script>
