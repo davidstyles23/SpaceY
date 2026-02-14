@@ -8,21 +8,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
-* {
+*{
 margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:'Inter', sans-serif;
 }
 
-body {
+body{
 background:black;
 color:white;
-overflow-x:hidden;
+overflow:hidden;
 }
 
-/* VIDEO BACKGROUND */
-video {
+/* VIDEO */
+video{
 position:fixed;
 right:0;
 bottom:0;
@@ -33,8 +33,7 @@ z-index:-2;
 filter:brightness(35%);
 }
 
-/* DARK OVERLAY */
-.overlay {
+.overlay-dark{
 position:fixed;
 top:0;
 left:0;
@@ -45,7 +44,7 @@ z-index:-1;
 }
 
 /* HEADER */
-header {
+header{
 padding:40px 8%;
 display:flex;
 justify-content:space-between;
@@ -53,17 +52,12 @@ align-items:center;
 letter-spacing:2px;
 }
 
-.logo {
+.logo{
 font-weight:800;
 font-size:18px;
 }
 
-.logo span {
-font-weight:300;
-opacity:0.7;
-}
-
-.status-badge {
+.status-badge{
 padding:8px 14px;
 border:1px solid rgba(255,255,255,0.2);
 font-size:12px;
@@ -71,67 +65,58 @@ letter-spacing:1px;
 text-transform:uppercase;
 }
 
-/* MAIN GRID */
-.container {
-width:84%;
+/* MAIN */
+.container{
+width:80%;
 margin:auto;
-margin-top:80px;
+margin-top:100px;
 display:grid;
 grid-template-columns:2fr 1fr;
 gap:40px;
 }
 
-/* MAIN MISSION PANEL */
-.main-panel {
+.main-panel{
 backdrop-filter:blur(12px);
 background:rgba(255,255,255,0.05);
 padding:60px;
 border:1px solid rgba(255,255,255,0.08);
 }
 
-.mission-title {
+.mission-title{
 font-size:36px;
 font-weight:600;
 margin-bottom:10px;
 }
 
-.rocket-name {
-font-size:14px;
+.rocket-name{
+font-size:13px;
 letter-spacing:2px;
 opacity:0.6;
 margin-bottom:40px;
 }
 
-.countdown {
+.countdown{
 font-size:52px;
 font-weight:800;
 letter-spacing:4px;
 margin-bottom:20px;
 }
 
-.phase {
+.phase{
 font-size:18px;
 letter-spacing:2px;
 opacity:0.8;
 }
 
 /* SIDE PANEL */
-.side-panel {
+.side-panel{
 backdrop-filter:blur(12px);
 background:rgba(255,255,255,0.05);
 padding:40px;
 border:1px solid rgba(255,255,255,0.08);
 }
 
-.side-panel h3 {
-margin-bottom:20px;
-font-weight:400;
-letter-spacing:2px;
-font-size:14px;
-opacity:0.7;
-}
-
-input {
+input{
 width:100%;
 padding:10px;
 margin-bottom:15px;
@@ -140,24 +125,80 @@ border:1px solid rgba(255,255,255,0.1);
 color:white;
 }
 
-button {
+button{
 width:100%;
 padding:10px;
 background:transparent;
 border:1px solid rgba(255,255,255,0.2);
 color:white;
 cursor:pointer;
-transition:all 0.3s;
+transition:0.3s;
 margin-bottom:10px;
 }
 
-button:hover {
+button:hover{
 background:white;
 color:black;
 }
 
-#adminPanel {
+#adminPanel{display:none;}
+
+/* 🚀 LAUNCH OVERLAY */
+#launchOverlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+padding:40px 0;
+text-align:center;
+background:linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
 display:none;
+z-index:10;
+animation:fadeIn 1s ease forwards;
+}
+
+.timeline{
+display:flex;
+justify-content:center;
+gap:60px;
+font-size:12px;
+letter-spacing:2px;
+opacity:0.7;
+margin-bottom:20px;
+}
+
+.timeline div{
+position:relative;
+}
+
+.timeline div::after{
+content:"";
+position:absolute;
+top:-10px;
+left:50%;
+width:6px;
+height:6px;
+background:white;
+border-radius:50%;
+transform:translateX(-50%);
+}
+
+.tplus{
+font-size:42px;
+font-weight:600;
+letter-spacing:3px;
+margin-bottom:5px;
+}
+
+.mission-label{
+font-size:13px;
+letter-spacing:2px;
+opacity:0.6;
+}
+
+@keyframes fadeIn{
+from{opacity:0;}
+to{opacity:1;}
 }
 </style>
 </head>
@@ -168,15 +209,11 @@ display:none;
 <source src="launch.mp4" type="video/mp4">
 </video>
 
-<div class="overlay"></div>
+<div class="overlay-dark"></div>
 
 <header>
-<div class="logo">
-SpaceY<span>Mission Control</span>
-</div>
-<div class="status-badge" id="statusBadge">
-AWAITING DATA
-</div>
+<div class="logo">SpaceY</div>
+<div class="status-badge" id="statusBadge">AWAITING DATA</div>
 </header>
 
 <div class="container">
@@ -191,14 +228,12 @@ AWAITING DATA
 <div class="side-panel">
 
 <div id="loginPanel">
-<h3>ADMIN ACCESS</h3>
 <input type="email" id="email" placeholder="Email">
 <input type="password" id="password" placeholder="Password">
 <button onclick="login()">LOGIN</button>
 </div>
 
 <div id="adminPanel">
-<h3>MISSION CONTROL</h3>
 <input type="text" id="adminMission" placeholder="Mission Name">
 <input type="text" id="adminRocket" placeholder="Rocket Name">
 <input type="datetime-local" id="adminLaunch">
@@ -211,6 +246,18 @@ AWAITING DATA
 </div>
 </div>
 
+<!-- 🚀 LAUNCH OVERLAY -->
+<div id="launchOverlay">
+<div class="timeline">
+<div>STARTUP</div>
+<div>LIFTOFF</div>
+<div>MAX-Q</div>
+<div>STAGE SEP</div>
+</div>
+<div class="tplus" id="tPlusTimer">T+ 00:00</div>
+<div class="mission-label" id="overlayMission">MISSION</div>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -218,85 +265,103 @@ import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebase
 import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_Jk7tFViWoa-Sh0WT5NCHNt3KKlomeTI",
-  authDomain: "spacey-1b9d2.firebaseapp.com",
-  databaseURL: "https://spacey-1b9d2-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "spacey-1b9d2",
-  storageBucket: "spacey-1b9d2.firebasestorage.app",
-  messagingSenderId: "116458770590",
-  appId: "1:116458770590:web:ef38bfbe02fead0c916b8f"
+apiKey: "AIzaSyB_Jk7tFViWoa-Sh0WT5NCHNt3KKlomeTI",
+authDomain: "spacey-1b9d2.firebaseapp.com",
+databaseURL: "https://spacey-1b9d2-default-rtdb.europe-west1.firebasedatabase.app",
+projectId: "spacey-1b9d2",
+storageBucket: "spacey-1b9d2.firebasestorage.app",
+messagingSenderId: "116458770590",
+appId: "1:116458770590:web:ef38bfbe02fead0c916b8f"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-const missionRef = ref(db, "mission");
+const missionRef = ref(db,"mission");
 
-let countdownInterval = null;
-let currentMission = {};
+let countdownInterval=null;
+let tPlusInterval=null;
+let liftoffTime=null;
+let currentMission={};
 
 function startCountdown(dateString){
 if(countdownInterval) clearInterval(countdownInterval);
+const target=new Date(dateString).getTime();
 
-const target = new Date(dateString).getTime();
+countdownInterval=setInterval(()=>{
+const now=new Date().getTime();
+const diff=target-now;
 
-countdownInterval = setInterval(()=>{
-const now = new Date().getTime();
-const distance = target - now;
-
-if(distance <= 0){
+if(diff<=0){
 clearInterval(countdownInterval);
 startMissionSequence();
 return;
 }
 
-const d = Math.floor(distance / (1000*60*60*24));
-const h = Math.floor((distance % (1000*60*60*24))/(1000*60*60));
-const m = Math.floor((distance % (1000*60*60))/(1000*60));
-const s = Math.floor((distance % (1000*60))/1000);
+const d=Math.floor(diff/(1000*60*60*24));
+const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+const m=Math.floor((diff%(1000*60*60))/(1000*60));
+const s=Math.floor((diff%(1000*60))/1000);
 
-document.getElementById("countdownDisplay").innerText =
+document.getElementById("countdownDisplay").innerText=
 `T-${d}:${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 
 },1000);
 }
 
 function startMissionSequence(){
-const phases = [
-{status:"IGNITION", delay:0},
-{status:"LIFTOFF", delay:5000},
-{status:"MAX-Q", delay:20000},
-{status:"STAGE SEPARATION", delay:60000},
-{status:"ORBIT CONFIRMED", delay:120000}
+
+liftoffTime=new Date().getTime();
+document.getElementById("launchOverlay").style.display="block";
+document.getElementById("overlayMission").innerText=currentMission.mission;
+
+if(tPlusInterval) clearInterval(tPlusInterval);
+
+tPlusInterval=setInterval(()=>{
+const now=new Date().getTime();
+const diff=now-liftoffTime;
+
+const minutes=Math.floor(diff/60000);
+const seconds=Math.floor((diff%60000)/1000);
+
+document.getElementById("tPlusTimer").innerText=
+`T+ ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
+},1000);
+
+const phases=[
+{status:"IGNITION",delay:0},
+{status:"LIFTOFF",delay:3000},
+{status:"MAX-Q",delay:20000},
+{status:"STAGE SEPARATION",delay:60000},
+{status:"ORBIT CONFIRMED",delay:120000}
 ];
 
-phases.forEach(phase=>{
+phases.forEach(p=>{
 setTimeout(()=>{
 set(missionRef,{
 ...currentMission,
-status:phase.status
+status:p.status
 });
-},phase.delay);
+},p.delay);
 });
 }
 
 onValue(missionRef,(snapshot)=>{
-const data = snapshot.val();
+const data=snapshot.val();
 if(!data) return;
 
-currentMission = data;
+currentMission=data;
 
-document.getElementById("missionName").innerText = data.mission;
-document.getElementById("rocketName").innerText = data.rocket;
-document.getElementById("missionPhase").innerText = data.status;
-document.getElementById("statusBadge").innerText = data.status;
+missionName.innerText=data.mission;
+rocketName.innerText=data.rocket;
+missionPhase.innerText=data.status;
+statusBadge.innerText=data.status;
 
-if(data.launchDate){
-startCountdown(data.launchDate);
-}
+if(data.launchDate) startCountdown(data.launchDate);
 });
 
-window.login = function(){
+window.login=function(){
 signInWithEmailAndPassword(auth,email.value,password.value)
 .then(()=>{
 adminPanel.style.display="block";
@@ -304,13 +369,13 @@ loginPanel.style.display="none";
 });
 }
 
-window.logout = function(){
+window.logout=function(){
 signOut(auth);
 adminPanel.style.display="none";
 loginPanel.style.display="block";
 }
 
-window.updateMission = function(){
+window.updateMission=function(){
 set(missionRef,{
 mission:adminMission.value,
 rocket:adminRocket.value,
@@ -319,14 +384,14 @@ status:"COUNTDOWN"
 });
 }
 
-window.abortMission = function(){
+window.abortMission=function(){
 set(missionRef,{
 ...currentMission,
 status:"MISSION ABORTED"
 });
 }
 
-window.resetMission = function(){
+window.resetMission=function(){
 set(missionRef,{
 mission:"",
 rocket:"",
@@ -336,5 +401,6 @@ status:"AWAITING NEW MISSION"
 }
 
 </script>
+
 </body>
 </html>
