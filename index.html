@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SpaceY</title>
+    <title>Orbital Dynamics</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
             min-height: 100%;
             object-fit: cover;
             z-index: -1;
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         .hero {
@@ -88,14 +88,14 @@
 <body>
 
 <video autoplay muted loop playsinline class="video-bg">
-    <source src="assets/IFT-1 Background.mp4" type="video/mp4">
+    <source src="assets/launch.mp4" type="video/mp4">
 </video>
 
-<header>SpaceY</header>
+<header>ORBITAL DYNAMICS</header>
 
 <div class="hero">
-    <h1 id="launchName">Integrated Flight Test 1</h1>
-    <h2 id="launchDate">2026-03-07</h2>
+    <h1 id="launchName">STARLIFT-1</h1>
+    <h2 id="launchDate">2026-03-01T18:00:00</h2>
     <h2 id="countdownDisplay"></h2>
 </div>
 
@@ -136,13 +136,13 @@
     <h3>ADMIN CONTROL</h3>
 
     <input id="adminLaunchName" placeholder="Launch Name">
-    <input id="adminLaunchDate" placeholder="Launch Date (YYYY-MM-DD)">
+    <input id="adminLaunchDate" placeholder="Launch Date (YYYY-MM-DDTHH:MM:SS)">
     <input id="adminPhase" placeholder="Mission Phase">
-    <input id="adminDirector" placeholder="Director (GO/NO GO/PENDING)">
-    <input id="adminBooster" placeholder="Booster (GO/NO GO/PENDING)">
-    <input id="adminEngines" placeholder="Engines (GO/NO GO/PENDING)">
-    <input id="adminGuidance" placeholder="Guidance (GO/NO GO/PENDING)">
-    <input id="adminWeather" placeholder="Weather (GO/NO GO/PENDING)">
+    <input id="adminDirector" placeholder="Director (GO/NO GO)">
+    <input id="adminBooster" placeholder="Booster (GO/NO GO)">
+    <input id="adminEngines" placeholder="Engines (GO/NO GO)">
+    <input id="adminGuidance" placeholder="Guidance (GO/NO GO)">
+    <input id="adminWeather" placeholder="Weather (GO/NO GO)">
     <input id="adminGoStatus" placeholder="GO Status Text">
     <input id="adminNews" placeholder="News Update">
 
@@ -158,13 +158,13 @@ import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_Jk7tFViWoa-Sh0WT5NCHNt3KKlomeTI",
-  authDomain: "spacey-1b9d2.firebaseapp.com",
-  databaseURL: "https://spacey-1b9d2-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "spacey-1b9d2",
-  storageBucket: "spacey-1b9d2.firebasestorage.app",
-  messagingSenderId: "116458770590",
-  appId: "1:116458770590:web:ef38bfbe02fead0c916b8f"
+  apiKey: "PASTE-YOURS",
+  authDomain: "PASTE-YOURS",
+  databaseURL: "PASTE-YOURS",
+  projectId: "PASTE-YOURS",
+  storageBucket: "PASTE-YOURS",
+  messagingSenderId: "PASTE-YOURS",
+  appId: "PASTE-YOURS"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -172,20 +172,38 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 const missionRef = ref(db, "mission");
 
-function updateCountdown(target){
-    setInterval(() => {
-        let now = new Date().getTime();
-        let distance = target - now;
-        if(distance <= 0){
-            document.getElementById("countdownDisplay").innerText = "LIFTOFF";
+let countdownInterval = null;
+
+function startCountdown(dateString) {
+
+    if (countdownInterval) clearInterval(countdownInterval);
+
+    const target = new Date(dateString).getTime();
+
+    if (isNaN(target)) {
+        document.getElementById("countdownDisplay").innerText = "Invalid Date";
+        return;
+    }
+
+    countdownInterval = setInterval(() => {
+
+        const now = new Date().getTime();
+        const distance = target - now;
+
+        if (distance <= 0) {
+            clearInterval(countdownInterval);
+            document.getElementById("countdownDisplay").innerText = "🚀 LIFTOFF";
             return;
         }
-        let days = Math.floor(distance/(1000*60*60*24));
-        let hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-        let minutes = Math.floor((distance%(1000*60*60))/(1000*60));
-        let seconds = Math.floor((distance%(1000*60))/1000);
+
+        const days = Math.floor(distance/(1000*60*60*24));
+        const hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+        const minutes = Math.floor((distance%(1000*60*60))/(1000*60));
+        const seconds = Math.floor((distance%(1000*60))/1000);
+
         document.getElementById("countdownDisplay").innerText =
-        `T-${days}D ${hours}H ${minutes}M ${seconds}S`;
+        `T-${days}:${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
     },1000);
 }
 
@@ -210,7 +228,8 @@ onValue(missionRef, (snapshot)=>{
     setStatus("weather",data.weather);
 
     document.getElementById("goStatus").innerText = data.goStatus;
-    updateCountdown(new Date(data.launchDate).getTime());
+
+    startCountdown(data.launchDate);
 
     let newsList = document.getElementById("newsList");
     newsList.innerHTML="";
@@ -222,16 +241,14 @@ onValue(missionRef, (snapshot)=>{
 });
 
 window.login=function(){
-    signInWithEmailAndPassword(auth,
-        document.getElementById("email").value,
-        document.getElementById("password").value
-    ).catch(e=>alert(e.message));
+    signInWithEmailAndPassword(auth,email.value,password.value)
+    .catch(e=>alert(e.message));
 }
 
 window.logout=function(){ signOut(auth); }
 
 onAuthStateChanged(auth,user=>{
-    document.getElementById("adminPanel").style.display = user?"block":"none";
+    adminPanel.style.display = user?"block":"none";
 });
 
 window.updateData=function(){
@@ -254,6 +271,3 @@ window.updateData=function(){
 
 </body>
 </html>
-
-
-
