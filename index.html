@@ -1,76 +1,159 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Space Y</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Y</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
-body {
+* {
 margin:0;
-font-family:Arial, Helvetica, sans-serif;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter', sans-serif;
+}
+
+body {
 background:black;
 color:white;
 overflow-x:hidden;
 }
 
+/* VIDEO BACKGROUND */
 video {
 position:fixed;
 right:0;
 bottom:0;
 min-width:100%;
 min-height:100%;
-z-index:-1;
 object-fit:cover;
-filter:brightness(40%);
+z-index:-2;
+filter:brightness(35%);
 }
 
+/* DARK OVERLAY */
+.overlay {
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.95));
+z-index:-1;
+}
+
+/* HEADER */
 header {
-text-align:center;
-padding:40px 20px;
-font-size:28px;
-letter-spacing:3px;
+padding:40px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+letter-spacing:2px;
 }
 
-.panel {
-background:rgba(0,0,0,0.7);
-padding:30px;
-margin:20px auto;
-width:90%;
-max-width:900px;
-border:1px solid #222;
+.logo {
+font-weight:800;
+font-size:18px;
 }
 
-.status {
-font-size:22px;
-margin:10px 0;
+.logo span {
+font-weight:300;
+opacity:0.7;
+}
+
+.status-badge {
+padding:8px 14px;
+border:1px solid rgba(255,255,255,0.2);
+font-size:12px;
+letter-spacing:1px;
+text-transform:uppercase;
+}
+
+/* MAIN GRID */
+.container {
+width:84%;
+margin:auto;
+margin-top:80px;
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:40px;
+}
+
+/* MAIN MISSION PANEL */
+.main-panel {
+backdrop-filter:blur(12px);
+background:rgba(255,255,255,0.05);
+padding:60px;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.mission-title {
+font-size:36px;
+font-weight:600;
+margin-bottom:10px;
+}
+
+.rocket-name {
+font-size:14px;
+letter-spacing:2px;
+opacity:0.6;
+margin-bottom:40px;
 }
 
 .countdown {
-font-size:32px;
-font-weight:bold;
+font-size:52px;
+font-weight:800;
+letter-spacing:4px;
+margin-bottom:20px;
 }
 
-button {
-padding:10px 15px;
-background:#111;
-color:white;
-border:1px solid #444;
-cursor:pointer;
-margin:5px 0;
+.phase {
+font-size:18px;
+letter-spacing:2px;
+opacity:0.8;
 }
 
-button:hover {
-background:#222;
+/* SIDE PANEL */
+.side-panel {
+backdrop-filter:blur(12px);
+background:rgba(255,255,255,0.05);
+padding:40px;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.side-panel h3 {
+margin-bottom:20px;
+font-weight:400;
+letter-spacing:2px;
+font-size:14px;
+opacity:0.7;
 }
 
 input {
-padding:8px;
-margin:5px 0;
 width:100%;
-background:#111;
-border:1px solid #333;
+padding:10px;
+margin-bottom:15px;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.1);
 color:white;
+}
+
+button {
+width:100%;
+padding:10px;
+background:transparent;
+border:1px solid rgba(255,255,255,0.2);
+color:white;
+cursor:pointer;
+transition:all 0.3s;
+margin-bottom:10px;
+}
+
+button:hover {
+background:white;
+color:black;
 }
 
 #adminPanel {
@@ -82,45 +165,54 @@ display:none;
 <body>
 
 <video autoplay muted loop>
-<source src="IFT-1 Background.mp4" type="video/mp4">
+<source src="launch.mp4" type="video/mp4">
 </video>
 
+<div class="overlay"></div>
+
 <header>
-Space Y
-<br>
-Mission Control
+<div class="logo">
+SpaceY<span>Mission Control</span>
+</div>
+<div class="status-badge" id="statusBadge">
+AWAITING DATA
+</div>
 </header>
 
-<div class="panel">
-<div id="missionName">Mission: Loading...</div>
-<div id="rocketName">Vehicle: Loading...</div>
-<div class="status" id="missionStatus">Status: Awaiting Data</div>
+<div class="container">
+
+<div class="main-panel">
+<div class="mission-title" id="missionName">Loading Mission...</div>
+<div class="rocket-name" id="rocketName">Loading Vehicle...</div>
 <div class="countdown" id="countdownDisplay">T-00:00:00:00</div>
+<div class="phase" id="missionPhase">STANDBY</div>
 </div>
 
-<div class="panel" id="loginPanel">
-<h3>Admin Login</h3>
+<div class="side-panel">
+
+<div id="loginPanel">
+<h3>ADMIN ACCESS</h3>
 <input type="email" id="email" placeholder="Email">
 <input type="password" id="password" placeholder="Password">
-<button onclick="login()">Login</button>
+<button onclick="login()">LOGIN</button>
 </div>
 
-<div class="panel" id="adminPanel">
-<h3>Admin Control</h3>
-
+<div id="adminPanel">
+<h3>MISSION CONTROL</h3>
 <input type="text" id="adminMission" placeholder="Mission Name">
 <input type="text" id="adminRocket" placeholder="Rocket Name">
 <input type="datetime-local" id="adminLaunch">
+<button onclick="updateMission()">UPDATE</button>
+<button onclick="abortMission()">ABORT</button>
+<button onclick="resetMission()">RESET</button>
+<button onclick="logout()">LOGOUT</button>
+</div>
 
-<button onclick="updateMission()">Update Mission</button>
-<button onclick="abortMission()">Abort</button>
-<button onclick="resetMission()">Reset</button>
-<button onclick="logout()">Logout</button>
+</div>
 </div>
 
 <script type="module">
 
-// 🔥 PASTE YOUR FIREBASE CONFIG HERE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -138,15 +230,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-
 const missionRef = ref(db, "mission");
 
 let countdownInterval = null;
-let phaseTimeout = null;
+let currentMission = {};
 
-// 🚀 Countdown Engine
-function startCountdown(dateString) {
-
+function startCountdown(dateString){
 if(countdownInterval) clearInterval(countdownInterval);
 
 const target = new Date(dateString).getTime();
@@ -161,22 +250,20 @@ startMissionSequence();
 return;
 }
 
-const days = Math.floor(distance / (1000*60*60*24));
-const hours = Math.floor((distance % (1000*60*60*24))/(1000*60*60));
-const minutes = Math.floor((distance % (1000*60*60))/(1000*60));
-const seconds = Math.floor((distance % (1000*60))/1000);
+const d = Math.floor(distance / (1000*60*60*24));
+const h = Math.floor((distance % (1000*60*60*24))/(1000*60*60));
+const m = Math.floor((distance % (1000*60*60))/(1000*60));
+const s = Math.floor((distance % (1000*60))/1000);
 
 document.getElementById("countdownDisplay").innerText =
-`T-${days}:${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+`T-${d}:${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 
 },1000);
 }
 
-// 🚀 Automatic Mission Phases
 function startMissionSequence(){
-
 const phases = [
-{status:"IGNITION SEQUENCE START", delay:0},
+{status:"IGNITION", delay:0},
 {status:"LIFTOFF", delay:5000},
 {status:"MAX-Q", delay:20000},
 {status:"STAGE SEPARATION", delay:60000},
@@ -193,51 +280,41 @@ status:phase.status
 });
 }
 
-let currentMission = {};
-
 onValue(missionRef,(snapshot)=>{
 const data = snapshot.val();
 if(!data) return;
 
 currentMission = data;
 
-document.getElementById("missionName").innerText = "Mission: " + data.mission;
-document.getElementById("rocketName").innerText = "Vehicle: " + data.rocket;
-document.getElementById("missionStatus").innerText = "Status: " + data.status;
+document.getElementById("missionName").innerText = data.mission;
+document.getElementById("rocketName").innerText = data.rocket;
+document.getElementById("missionPhase").innerText = data.status;
+document.getElementById("statusBadge").innerText = data.status;
 
 if(data.launchDate){
 startCountdown(data.launchDate);
 }
 });
 
-// 🔐 Auth
 window.login = function(){
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-signInWithEmailAndPassword(auth,email,password)
+signInWithEmailAndPassword(auth,email.value,password.value)
 .then(()=>{
-document.getElementById("adminPanel").style.display="block";
-document.getElementById("loginPanel").style.display="none";
+adminPanel.style.display="block";
+loginPanel.style.display="none";
 });
 }
 
 window.logout = function(){
 signOut(auth);
-document.getElementById("adminPanel").style.display="none";
-document.getElementById("loginPanel").style.display="block";
+adminPanel.style.display="none";
+loginPanel.style.display="block";
 }
 
-// 🛰 Admin Controls
 window.updateMission = function(){
-const mission = document.getElementById("adminMission").value;
-const rocket = document.getElementById("adminRocket").value;
-const launchDate = document.getElementById("adminLaunch").value;
-
 set(missionRef,{
-mission,
-rocket,
-launchDate,
+mission:adminMission.value,
+rocket:adminRocket.value,
+launchDate:adminLaunch.value,
 status:"COUNTDOWN"
 });
 }
@@ -259,6 +336,5 @@ status:"AWAITING NEW MISSION"
 }
 
 </script>
-
 </body>
 </html>
